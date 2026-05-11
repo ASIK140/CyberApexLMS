@@ -1,27 +1,36 @@
 'use strict';
+require('dotenv').config();
 const { Sequelize } = require('sequelize');
 const { logger } = require('./logger');
 
-if (!process.env.DB_HOST) {
-    throw new Error('FATAL: DB_HOST environment variable is missing. PostgreSQL is required.');
-}
+let sequelizeInstance = null;
 
-const sequelize = new Sequelize(
-    process.env.DB_NAME || 'cyberapex_db',
-    process.env.DB_USER || 'postgres',
-    process.env.DB_PASSWORD || 'password',
-    {
-        host: process.env.DB_HOST,
-        port: parseInt(process.env.DB_PORT) || 5432,
-        dialect: 'postgres',
-        logging: false,
-        retry: { max: 3 },
-        pool: { max: 10, min: 0, acquire: 5000, idle: 10000 },
+function getSequelize() {
+    if (sequelizeInstance) return sequelizeInstance;
+
+    if (!process.env.DB_HOST) {
+        throw new Error('FATAL: DB_HOST environment variable is missing. PostgreSQL is required.');
     }
-);
+
+    sequelizeInstance = new Sequelize(
+        process.env.DB_NAME || 'cyberapex_db',
+        process.env.DB_USER || 'postgres',
+        process.env.DB_PASSWORD || 'password',
+        {
+            host: process.env.DB_HOST,
+            port: parseInt(process.env.DB_PORT) || 5432,
+            dialect: 'postgres',
+            logging: false,
+            retry: { max: 3 },
+            pool: { max: 10, min: 0, acquire: 5000, idle: 10000 },
+        }
+    );
+    return sequelizeInstance;
+}
 
 async function connectDB() {
     try {
+        const sequelize = getSequelize();
         console.log(`Connecting to Postgres at ${process.env.DB_HOST}:${process.env.DB_PORT || 5432}...`);
         await sequelize.authenticate();
         logger.info('✅ PostgreSQL connected successfully');
@@ -37,6 +46,6 @@ async function connectDB() {
 }
 
 module.exports = { 
-    sequelize,
+    get sequelize() { return getSequelize(); },
     connectDB 
 };
