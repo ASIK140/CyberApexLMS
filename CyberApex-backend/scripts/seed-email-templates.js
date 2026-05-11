@@ -1,0 +1,47 @@
+const templates = [
+    { name: 'Welcome to Security Awareness Training', type: 'Welcome', subject: 'Welcome, {{first_name}}! Your Security Training Begins Today', from_name: 'CyberApex LMS', from_email: 'noreply@cyberapex.com', body_html: '<html><body style="font-family:Arial,sans-serif;background:#f5f5f5;padding:40px"><div style="max-width:600px;margin:auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.1)"><div style="background:#1d4ed8;padding:30px;text-align:center"><h1 style="color:#fff;margin:0;font-size:26px">Welcome, {{first_name}}! 👋</h1></div><div style="padding:30px"><p>You have been enrolled in the <strong>{{course_name}}</strong> program.</p><p>Your training deadline is <strong>{{deadline_date}}</strong>.</p><a href="{{training_link}}" style="background:#1d4ed8;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;display:inline-block;margin-top:16px">Start Training →</a></div></div></body></html>', body_text: 'Welcome, {{first_name}}! Enrolled: {{course_name}}. Deadline: {{deadline_date}}. Start: {{training_link}}' },
+    { name: 'Monthly Security Awareness Digest', type: 'Awareness', subject: 'Your Monthly Security Digest – {{deadline_date}}', from_name: 'Security Team', from_email: 'security@organization.com', body_html: '<html><body style="font-family:Segoe UI,sans-serif;background:#0f172a;padding:40px"><div style="max-width:600px;margin:auto;background:#1e293b;border-radius:12px;overflow:hidden"><div style="background:linear-gradient(135deg,#3b82f6,#06b6d4);padding:30px;text-align:center"><h1 style="color:#fff;margin:0">🛡️ Security Digest</h1></div><div style="padding:30px;color:#cbd5e1"><p>Hi <strong style="color:#fff">{{first_name}}</strong>,</p><p>Risk Score: <span style="color:#f87171;font-weight:bold">{{risk_score}}</span></p><p>Completion: <strong style="color:#4ade80">{{completion_pct}}</strong></p></div></div></body></html>', body_text: 'Hi {{first_name}}, Risk Score: {{risk_score}}, Completion: {{completion_pct}}' },
+    { name: 'Training Overdue – Final Reminder', type: 'Overdue', subject: '⚠️ Action Required: Training Overdue – {{first_name}}', from_name: 'Compliance Office', from_email: 'compliance@organization.com', body_html: '<html><body style="font-family:Arial,sans-serif;padding:40px;background:#fef2f2"><div style="max-width:600px;margin:auto;background:#fff;border:2px solid #ef4444;border-radius:12px;overflow:hidden"><div style="background:#ef4444;padding:20px;text-align:center"><h1 style="color:#fff;margin:0">⚠️ Training Overdue</h1></div><div style="padding:30px"><p>Hi <strong>{{first_name}}</strong>,</p><p>{{course_name}} was due on <strong>{{deadline_date}}</strong>. Manager {{manager_name}} notified.</p><a href="{{training_link}}" style="background:#ef4444;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;display:inline-block;margin-top:16px">Complete Now →</a></div></div></body></html>', body_text: 'Hi {{first_name}}, {{course_name}} is OVERDUE (was due {{deadline_date}}). Manager {{manager_name}} notified. Link: {{training_link}}' },
+    { name: 'Course Completion Certificate', type: 'Certificate', subject: '🎉 Congratulations {{first_name}} – Certificate Ready!', from_name: 'CyberApex LMS', from_email: 'certificates@cyberapex.com', body_html: '<html><body style="font-family:Georgia,serif;padding:40px;background:#f0fdf4"><div style="max-width:600px;margin:auto;background:#fff;border:3px solid #16a34a;border-radius:12px;overflow:hidden;text-align:center"><div style="background:#16a34a;padding:24px"><h1 style="color:#fff;margin:0">🏆 Congratulations!</h1></div><div style="padding:40px"><h2>{{first_name}}</h2><p>has successfully completed <strong>{{course_name}}</strong></p><p>Completion: {{completion_pct}}</p><a href="{{cert_link}}" style="background:#16a34a;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;display:inline-block;margin-top:20px">Download Certificate →</a></div></div></body></html>', body_text: 'Congrats {{first_name}}! You completed {{course_name}} ({{completion_pct}}). Download: {{cert_link}}' },
+    { name: 'Phishing Simulation – Password Reset Lure', type: 'Simulation', subject: 'Action Required: Reset Your Account Password', from_name: 'IT Helpdesk', from_email: 'helpdesk@support-acme.com', body_html: '<html><body style="font-family:Arial,sans-serif;background:#f3f4f6;padding:40px"><div style="max-width:600px;margin:auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.15)"><div style="background:#1f2937;padding:20px 30px"><h3 style="color:#fff;margin:0">IT Helpdesk Notification</h3></div><div style="padding:30px"><p>Dear {{first_name}},</p><p>Unusual login activity detected! Reset your password within 24 hours.</p><a href="{{training_link}}" style="background:#dc2626;color:#fff;padding:14px 30px;border-radius:6px;text-decoration:none;display:inline-block;margin:20px 0">Reset Password Now</a></div></div></body></html>', body_text: 'Dear {{first_name}}, reset your password now: {{training_link}}' },
+    { name: 'CEO Fraud – Wire Transfer Lure', type: 'Simulation', subject: 'URGENT: Confidential Wire Transfer Required', from_name: 'CEO Office', from_email: 'ceo@acme-corporate.net', body_html: '<html><body style="font-family:Arial,sans-serif;padding:30px"><p>Hi {{first_name}},</p><p>Process an urgent wire transfer of <strong>$47,500</strong> as part of a confidential acquisition. ASAP before EOD.</p><p>Details: <a href="{{training_link}}">Transfer Instructions</a></p><p>Keep confidential.<br>CEO</p></body></html>', body_text: 'Hi {{first_name}}, process the wire transfer: {{training_link}}' },
+    { name: 'Security Tips – Phishing Awareness', type: 'Awareness', subject: '5 Ways to Spot Phishing Emails This Month', from_name: 'Security Team', from_email: 'security@organization.com', body_html: '<html><body style="font-family:Arial,sans-serif;padding:40px;background:#eff6ff"><div style="max-width:600px;margin:auto;background:#fff;padding:32px;border-radius:12px"><h2 style="color:#1d4ed8">🎣 5 Ways to Spot Phishing</h2><p>Hi {{first_name}},</p><ol><li>Check sender domain</li><li>Hover before clicking links</li><li>Watch for urgency</li><li>Never enter credentials from email links</li><li>Report suspicious emails</li></ol><a href="{{training_link}}" style="background:#1d4ed8;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block">Take Quiz</a></div></body></html>', body_text: 'Hi {{first_name}}, 5 ways to spot phishing. Quiz: {{training_link}}' },
+    { name: 'Training Reminder – 3 Days Left', type: 'Overdue', subject: 'Reminder: {{course_name}} Due in 3 Days', from_name: 'LMS Compliance Bot', from_email: 'notifications@cyberapex.com', body_html: '<html><body style="font-family:Arial,sans-serif;padding:40px;background:#fffbeb"><div style="max-width:600px;margin:auto;background:#fff;padding:30px;border-radius:12px;border:2px solid #f59e0b"><h2>⏰ 3 Days Left</h2><p>Hi <strong>{{first_name}}</strong>,</p><p>{{course_name}} is due on <strong>{{deadline_date}}</strong>. Completed: <strong>{{completion_pct}}</strong>.</p><a href="{{training_link}}" style="background:#f59e0b;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block">Resume Training</a></div></body></html>', body_text: 'Hi {{first_name}}, 3 days left for {{course_name}} (due {{deadline_date}}). Resume: {{training_link}}' },
+];
+
+const typeVariants = ['Awareness', 'Overdue', 'Certificate', 'Welcome', 'Simulation', 'Custom'];
+while (templates.length < 24) {
+    const i = templates.length;
+    const t = typeVariants[i % typeVariants.length];
+    templates.push({
+        name: `Template Variant ${i + 1} – ${t}`,
+        type: t,
+        subject: `[${t}] Important Update for {{first_name}}`,
+        from_name: 'Security Team',
+        from_email: 'security@organization.com',
+        body_html: `<html><body style="font-family:Arial,sans-serif;padding:32px;background:#f9fafb"><div style="max-width:560px;margin:auto;background:#fff;padding:28px;border-radius:10px;border:1px solid #e5e7eb"><p>Hi <strong>{{first_name}}</strong>,</p><p>This is a <strong>${t}</strong> notification.</p><p>Risk Score: <span style="color:#f87171">{{risk_score}}</span> | Completion: <strong style="color:#4ade80">{{completion_pct}}</strong></p><a href="{{training_link}}" style="background:#2563eb;color:#fff;padding:10px 22px;border-radius:6px;text-decoration:none;display:inline-block;margin-top:12px">Take Action →</a></div></body></html>`,
+        body_text: `Hi {{first_name}}, this is a ${t} notification. Risk: {{risk_score}} | Completion: {{completion_pct}}. Link: {{training_link}}`
+    });
+}
+
+async function main() {
+    const BASE = 'http://localhost:5000/api/tenant/templates';
+    let ok = 0, fail = 0;
+    for (const t of templates) {
+        try {
+            const res = await fetch(`${BASE}/create`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(t)
+            });
+            const data = await res.json();
+            if (data.success) { ok++; process.stdout.write('.'); }
+            else { fail++; console.error('\nFailed:', t.name, data.message); }
+        } catch(e) {
+            fail++;
+            console.error('\nError seeding', t.name, e.message);
+        }
+    }
+    console.log(`\n✅ Seeded ${ok} templates. ❌ Failed: ${fail}`);
+}
+main();

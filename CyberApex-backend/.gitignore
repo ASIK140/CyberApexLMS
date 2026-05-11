@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+
+# Environment
+.env
+
+# Database
+database.sqlite
+
+# Prisma
+# Keep migrations, but ignore everything else that might be temporary
+# /prisma/migrations/ (Uncomment if you want to manage migrations differently)
+
+# Keys (DO NOT COMMIT SENSITIVE KEYS)
+keys/private.pem
+
+# Logs
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

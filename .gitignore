@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+*.txt
+backend-out.txt
+backend-err.txt
+next.out.log
+next.err.log
+frontend.log
+worker.out.log
+worker.err.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# System-wide DBs
+database.sqlite

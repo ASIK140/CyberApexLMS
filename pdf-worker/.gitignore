@@ -1,0 +1,10 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+
+# Logs
+*.log
+worker.out.log
+worker.err.log
