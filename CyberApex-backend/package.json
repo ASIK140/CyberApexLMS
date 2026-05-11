@@ -72,11 +72,13 @@
     "sequelize": "^6.37.3",
     "sharp": "^0.33.5",
     "speakeasy": "^2.0.0",
-    "sqlite3": "^6.0.1",
     "typescript": "^5.9.3",
     "uuid": "^10.0.0",
     "winston": "^3.13.0",
     "zod": "^3.25.76"
+  },
+  "optionalDependencies": {
+    "sqlite3": "^6.0.1"
   },
   "devDependencies": {
     "@types/supertest": "^7.2.0",
