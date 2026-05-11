@@ -3,9 +3,6 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 const { encrypt, decrypt } = require('../utils/encryption');
 
-const isSqlite = sequelize.getDialect() === 'sqlite';
-const ArrayType = isSqlite ? DataTypes.JSON : DataTypes.ARRAY(DataTypes.STRING);
-
 /* ─── Users ─────────────────────────────── */
 const User = sequelize.define('User', {
     id:        { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
@@ -47,7 +44,7 @@ const Tenant = sequelize.define('Tenant', {
     status:               { type: DataTypes.ENUM('active','inactive','trial'), defaultValue: 'trial' },
     seat_count:           { type: DataTypes.INTEGER, defaultValue: 0 },
     monthly_revenue:      { type: DataTypes.DECIMAL(10,2), defaultValue: 0 },
-    assigned_courses:     { type: ArrayType, defaultValue: isSqlite ? '[]' : [] },
+    assigned_courses:     { type: DataTypes.ARRAY(DataTypes.STRING), defaultValue: [] },
     secondary_email:      { type: DataTypes.STRING(255) },
 }, { tableName: 'tenants', underscored: true });
 
@@ -102,7 +99,7 @@ const Course = sequelize.define('Course', {
     title:           { type: DataTypes.STRING(255), allowNull: false },
     description:     { type: DataTypes.TEXT },
     category:        { type: DataTypes.STRING(100) },
-    framework_tags:  { type: ArrayType, defaultValue: isSqlite ? '[]' : [] },
+    framework_tags:  { type: DataTypes.ARRAY(DataTypes.STRING), defaultValue: [] },
     difficulty_level:{ type: DataTypes.ENUM('beginner','intermediate','advanced'), defaultValue: 'beginner' },
     status:          { type: DataTypes.ENUM('draft','published','archived'), defaultValue: 'draft' },
     created_by:      { type: DataTypes.STRING(255) },
@@ -449,7 +446,7 @@ const IndustryPack = sequelize.define('IndustryPack', {
     pack_id:          { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     pack_name:        { type: DataTypes.STRING(255), allowNull: false },
     industry:         { type: DataTypes.STRING(100), allowNull: false },
-    included_courses: { type: ArrayType, defaultValue: isSqlite ? '[]' : [] },
+    included_courses: { type: DataTypes.ARRAY(DataTypes.STRING), defaultValue: [] },
     description:      { type: DataTypes.TEXT },
     tenant_count:     { type: DataTypes.INTEGER, defaultValue: 0 },
     status:           { type: DataTypes.ENUM('active','inactive'), defaultValue: 'active' },
