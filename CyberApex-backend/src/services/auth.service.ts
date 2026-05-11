@@ -20,8 +20,7 @@ export interface RequestUser {
 
 export function validateAuthEnvironment(): void {
   const isProduction = process.env.NODE_ENV === 'production';
-  if (!isProduction) return;
-
+  
   const missingVars: string[] = [];
 
   // JWT signing keys (for access token)
@@ -38,30 +37,40 @@ export function validateAuthEnvironment(): void {
   }
 
   if (missingVars.length > 0) {
-    const error = new Error(
-      `Missing required environment variables in production: ${missingVars.join(', ')}`
-    );
-    logger.fatal({ missingVars }, 'Auth environment validation failed');
-    throw error;
+    if (isProduction) {
+      const error = new Error(
+        `Missing required environment variables in production: ${missingVars.join(', ')}`
+      );
+      logger.fatal({ missingVars }, 'Auth environment validation failed');
+      throw error;
+    } else {
+      logger.warn({ missingVars }, 'Auth environment missing variables (ignored in dev)');
+    }
+  } else {
+    logger.info('Auth environment validation passed');
   }
-
-  logger.info('Auth environment validation passed');
 }
 
 // ─── Key loading ──────────────────────────────────────────────────────────────
 
 function getPrivateKey(): string {
+  if (process.env.JWT_PRIVATE_KEY) {
+    return process.env.JWT_PRIVATE_KEY.replace(/\\n/g, '\n');
+  }
   if (process.env.JWT_PRIVATE_KEY_PATH) {
     return fs.readFileSync(process.env.JWT_PRIVATE_KEY_PATH, 'utf8');
   }
-  return (process.env.JWT_PRIVATE_KEY ?? '').replace(/\\n/g, '\n');
+  throw new Error('JWT_PRIVATE_KEY or JWT_PRIVATE_KEY_PATH must be defined');
 }
 
 function getPublicKey(): string {
+  if (process.env.JWT_PUBLIC_KEY) {
+    return process.env.JWT_PUBLIC_KEY.replace(/\\n/g, '\n');
+  }
   if (process.env.JWT_PUBLIC_KEY_PATH) {
     return fs.readFileSync(process.env.JWT_PUBLIC_KEY_PATH, 'utf8');
   }
-  return (process.env.JWT_PUBLIC_KEY ?? '').replace(/\\n/g, '\n');
+  throw new Error('JWT_PUBLIC_KEY or JWT_PUBLIC_KEY_PATH must be defined');
 }
 
 // ─── RLS bypass for auth operations ──────────────────────────────────────────
