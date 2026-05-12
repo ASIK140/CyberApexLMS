@@ -112,7 +112,7 @@ export default function SuperAdminLayout({
 
         console.log('[DEBUG] Export initiated:', { pathname, endpoint, fmt });
 
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+        const baseUrl = '/api';
         const sep = endpoint.includes('?') ? '&' : '?';
         // Use the stored token for demo authentication (valid 365d from 2026-05-02)
         const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJlbWFpbCI6ImFkbWluQGN5YmVyYXBleC5pbyIsInJvbGUiOiJzdXBlcl9hZG1pbiIsInRlbmFudF9pZCI6bnVsbCwibmFtZSI6IlN1cGVyIEFkbWluIiwiaWF0IjoxNzc3NzI1ODMxLCJleHAiOjE4MDkyNjE4MzF9.lR308YOJLH-xyLuvcvCIIwJ_82nOCASmwQuxzkpmW8U';

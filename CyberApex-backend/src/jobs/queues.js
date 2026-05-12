@@ -7,10 +7,11 @@ let queues = {};
 
 try {
     const Redis = require('ioredis');
-    redisConnection = new Redis({
-        host: process.env.REDIS_HOST || 'localhost',
-        port: parseInt(process.env.REDIS_PORT) || 6379,
+    const redisUrl = process.env.REDIS_URL || `redis://${process.env.REDIS_HOST || 'localhost'}:${process.env.REDIS_PORT || 6379}`;
+    
+    redisConnection = new Redis(redisUrl, {
         maxRetriesPerRequest: null,
+        enableReadyCheck: false,
         lazyConnect: true,
     });
 

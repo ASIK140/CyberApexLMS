@@ -292,10 +292,9 @@ export default function StudentDetailPage() {
     };
 
     const handleExport = () => {
-        const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
         const match = document.cookie.match(/(^| )token=([^;]+)/);
         const token = match ? match[2] : '';
-        window.open(`${base}/admin/students/${id}/activity-report?format=pdf&token=${token}`, '_blank');
+        window.open(`/api/admin/students/${id}/activity-report?format=pdf&token=${token}`, '_blank');
     };
 
     const handleSendReminder = () => showMsg('📧 Payment reminder email queued for delivery.');

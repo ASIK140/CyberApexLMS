@@ -37,7 +37,7 @@ export default function AuditLogPage() {
     }, [filters]);
 
     const handleExport = (format: string) => {
-        const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/admin/audit-log/export/${format}`;
+        const url = `/api/admin/audit-log/export/${format}`;
         window.open(url, '_blank');
     };
 
