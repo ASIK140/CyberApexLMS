@@ -10,7 +10,7 @@ const User = sequelize.define('User', {
     email:     { type: DataTypes.STRING(255), allowNull: false, unique: true },
     password:  { type: DataTypes.STRING(255), allowNull: false },
     role:      { type: DataTypes.ENUM('super_admin', 'tenant_admin', 'ciso', 'employee'), defaultValue: 'employee' },
-    tenant_id: { type: DataTypes.STRING(100), allowNull: true },
+    tenant_id: { type: DataTypes.UUID, allowNull: true },
     status:    { type: DataTypes.ENUM('active','inactive','suspended'), defaultValue: 'active' },
 }, { tableName: 'users', underscored: true });
 
@@ -34,12 +34,12 @@ User.afterFind(async (results) => {
 
 /* ─── Tenants ───────────────────────────── */
 const Tenant = sequelize.define('Tenant', {
-    tenant_id:            { type: DataTypes.STRING(50), primaryKey: true },
-    organization_name:    { type: DataTypes.STRING(255), allowNull: false },
+    tenant_id:            { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true, field: 'id' },
+    organization_name:    { type: DataTypes.STRING(255), allowNull: false, field: 'name' },
     industry:             { type: DataTypes.STRING(100) },
     admin_email:          { type: DataTypes.STRING(255), allowNull: false },
-    plan_type:            { type: DataTypes.ENUM('Starter','Professional','Enterprise'), defaultValue: 'Starter' },
-    user_limit:           { type: DataTypes.INTEGER, defaultValue: 50 },
+    plan_type:            { type: DataTypes.ENUM('Starter','Professional','Enterprise'), defaultValue: 'Starter', field: 'subscription_plan' },
+    user_limit:           { type: DataTypes.INTEGER, defaultValue: 50, field: 'max_users' },
     subscription_status:  { type: DataTypes.ENUM('active','trial','suspended','cancelled'), defaultValue: 'trial' },
     status:               { type: DataTypes.ENUM('active','inactive','trial'), defaultValue: 'trial' },
     seat_count:           { type: DataTypes.INTEGER, defaultValue: 0 },
@@ -95,14 +95,14 @@ const IndividualStudent = sequelize.define('IndividualStudent', {
 
 /* ─── Courses ───────────────────────────── */
 const Course = sequelize.define('Course', {
-    course_id:       { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+    course_id:       { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true, field: 'id' },
     title:           { type: DataTypes.STRING(255), allowNull: false },
     description:     { type: DataTypes.TEXT },
     category:        { type: DataTypes.STRING(100) },
     framework_tags:  { type: DataTypes.ARRAY(DataTypes.STRING), defaultValue: [] },
     difficulty_level:{ type: DataTypes.ENUM('beginner','intermediate','advanced'), defaultValue: 'beginner' },
     status:          { type: DataTypes.ENUM('draft','published','archived'), defaultValue: 'draft' },
-    created_by:      { type: DataTypes.STRING(255) },
+    created_by:      { type: DataTypes.UUID },
 }, { tableName: 'courses', underscored: true });
 
 /* ─── Training Records ──────────────────── */
@@ -110,7 +110,7 @@ const TrainingRecord = sequelize.define('TrainingRecord', {
     id:          { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     user_id:     { type: DataTypes.UUID, allowNull: false },
     course_id:   { type: DataTypes.UUID, allowNull: false },
-    tenant_id:   { type: DataTypes.STRING(50) },
+    tenant_id:   { type: DataTypes.UUID },
     status:      { type: DataTypes.ENUM('not_started','in_progress','completed'), defaultValue: 'not_started' },
     score:       { type: DataTypes.INTEGER },
     completed_at:{ type: DataTypes.DATE },
@@ -118,10 +118,10 @@ const TrainingRecord = sequelize.define('TrainingRecord', {
 
 /* ─── Certificates ──────────────────────── */
 const Certificate = sequelize.define('Certificate', {
-    certificate_id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+    certificate_id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true, field: 'id' },
     user_id:        { type: DataTypes.UUID, allowNull: false },
     course_id:      { type: DataTypes.UUID, allowNull: false },
-    tenant_id:      { type: DataTypes.STRING(50) },
+    tenant_id:      { type: DataTypes.UUID },
     issued_at:      { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
     expires_at:     { type: DataTypes.DATE },
     certificate_url:{ type: DataTypes.STRING(1000) },
@@ -131,7 +131,7 @@ const Certificate = sequelize.define('Certificate', {
 /* ─── Phishing Campaigns ────────────────── */
 const PhishingCampaign = sequelize.define('PhishingCampaign', {
     campaign_id:           { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:             { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:             { type: DataTypes.UUID, allowNull: false },
     name:                  { type: DataTypes.STRING(255), allowNull: false },
     type:                  { type: DataTypes.STRING(50), defaultValue: 'Email Phishing' },
     template_id:           { type: DataTypes.STRING(100) },
@@ -167,7 +167,7 @@ const PhishingLandingPage = sequelize.define('PhishingLandingPage', {
 
 const EmailTemplate = sequelize.define('EmailTemplate', {
     id:            { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:     { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:     { type: DataTypes.UUID, allowNull: false },
     name:          { type: DataTypes.STRING(255), allowNull: false },
     type:          { type: DataTypes.ENUM('Awareness', 'Overdue', 'Certificate', 'Welcome', 'Simulation', 'Custom'), defaultValue: 'Custom' },
     subject:       { type: DataTypes.STRING(500), allowNull: false },
@@ -188,7 +188,7 @@ const TemplateUsage = sequelize.define('TemplateUsage', {
 
 const SsoConfig = sequelize.define('SsoConfig', {
     id:                   { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:            { type: DataTypes.STRING(50), allowNull: false, unique: true },
+    tenant_id:            { type: DataTypes.UUID, allowNull: false, unique: true },
     provider:             { type: DataTypes.STRING(100), defaultValue: 'Microsoft Entra ID' },
     protocol:             { type: DataTypes.STRING(50), defaultValue: 'SAML 2.0' },
     entity_id:            { type: DataTypes.TEXT },
@@ -204,7 +204,7 @@ const SsoConfig = sequelize.define('SsoConfig', {
 
 const ScimConfig = sequelize.define('ScimConfig', {
     id:              { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:       { type: DataTypes.STRING(50), allowNull: false, unique: true },
+    tenant_id:       { type: DataTypes.UUID, allowNull: false, unique: true },
     base_url:        { type: DataTypes.TEXT },
     token:           { type: DataTypes.TEXT },
     status:          { type: DataTypes.STRING(20), defaultValue: 'enabled' },
@@ -217,7 +217,7 @@ const ScimConfig = sequelize.define('ScimConfig', {
 
 const ScimLog = sequelize.define('ScimLog', {
     id:            { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:     { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:     { type: DataTypes.UUID, allowNull: false },
     event_type:    { type: DataTypes.STRING(50) }, // CREATE, UPDATE, DELETE, SYNC, DIAGNOSTIC
     status:        { type: DataTypes.STRING(20) }, // success, error, warning
     message:       { type: DataTypes.TEXT },
@@ -228,7 +228,7 @@ const ScimLog = sequelize.define('ScimLog', {
 // ─── Phase IX: Integrations Hub ──────────────────────────────────────
 const Integration = sequelize.define('Integration', {
     id:            { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:     { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:     { type: DataTypes.UUID, allowNull: false },
     provider_name: { type: DataTypes.STRING(100), allowNull: false }, // Microsoft 365, BambooHR, Slack, etc.
     type:          { type: DataTypes.STRING(50) },                    // IAM, HRMS, Messaging, ITSM
     status:        { type: DataTypes.STRING(20), defaultValue: 'disconnected' }, // connected, disconnected, error
@@ -239,7 +239,7 @@ const Integration = sequelize.define('Integration', {
 
 const IntegrationLog = sequelize.define('IntegrationLog', {
     id:          { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:   { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:   { type: DataTypes.UUID, allowNull: false },
     provider:    { type: DataTypes.STRING(100) },
     event_type:  { type: DataTypes.STRING(50) },  // CONNECT, DISCONNECT, SYNC, ERROR, AUTOMATION
     status:      { type: DataTypes.STRING(20) },  // success, error, warning
@@ -249,7 +249,7 @@ const IntegrationLog = sequelize.define('IntegrationLog', {
 
 const SyncData = sequelize.define('SyncData', {
     id:            { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:     { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:     { type: DataTypes.UUID, allowNull: false },
     provider:      { type: DataTypes.STRING(100) },
     users_synced:  { type: DataTypes.INTEGER, defaultValue: 0 },
     groups_synced: { type: DataTypes.INTEGER, defaultValue: 0 },
@@ -261,7 +261,7 @@ const SyncData = sequelize.define('SyncData', {
 
 const StudioCourse = sequelize.define('StudioCourse', {
     id:               { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:        { type: DataTypes.STRING(50), defaultValue: 'content_team' },
+    tenant_id:        { type: DataTypes.UUID, defaultValue: '00000000-0000-0000-0000-000000000000' },
     title:            { type: DataTypes.STRING(255), allowNull: false },
     description:      { type: DataTypes.TEXT },
     audience:         { type: DataTypes.STRING(100), defaultValue: 'Corporate' }, // Corporate, NGO
@@ -342,7 +342,7 @@ StudioQuestion.belongsTo(StudioQuiz, { foreignKey: 'quiz_id' });
 // ─── Phase X: Adaptive Rules Engine ────────────────────────────────────────────
 const Rule = sequelize.define('Rule', {
     id:               { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:        { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:        { type: DataTypes.UUID, allowNull: false },
     name:             { type: DataTypes.STRING(255), allowNull: false },
     trigger_type:     { type: DataTypes.STRING(100), allowNull: false },
     conditions_json:  { type: DataTypes.JSON, defaultValue: {} },
@@ -392,7 +392,7 @@ const PhishingEvent = sequelize.define('PhishingEvent', {
 /* ─── Escalations ───────────────────────── */
 const Escalation = sequelize.define('Escalation', {
     escalation_id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:     { type: DataTypes.STRING(50) },
+    tenant_id:     { type: DataTypes.UUID },
     severity:      { type: DataTypes.ENUM('critical','high','medium','low'), defaultValue: 'medium' },
     issue_type:    { type: DataTypes.STRING(100) },
     description:   { type: DataTypes.TEXT, allowNull: false },
@@ -404,13 +404,13 @@ const Escalation = sequelize.define('Escalation', {
 
 /* ─── Audit Logs ────────────────────────── */
 const AuditLog = sequelize.define('AuditLog', {
-    log_id:          { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    actor_user_id:   { type: DataTypes.STRING(100) },
+    log_id:          { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true, field: 'id' },
+    actor_user_id:   { type: DataTypes.UUID, field: 'actor_id' },
     actor_email:     { type: DataTypes.STRING(255) },
     actor_role:      { type: DataTypes.STRING(50) },
-    tenant_id:       { type: DataTypes.STRING(50) },
-    action_type:     { type: DataTypes.STRING(100), allowNull: false },
-    target_resource: { type: DataTypes.STRING(255) },
+    tenant_id:       { type: DataTypes.UUID },
+    action_type:     { type: DataTypes.STRING(100), allowNull: false, field: 'action' },
+    target_resource: { type: DataTypes.STRING(255), field: 'entity_type' },
     ip_address:      { type: DataTypes.STRING(50) },
     result:          { type: DataTypes.ENUM('success','failure'), defaultValue: 'success' },
 }, { tableName: 'audit_logs', underscored: true });
@@ -436,7 +436,7 @@ const Notification = sequelize.define('Notification', {
     type:            { type: DataTypes.STRING(50) },
     title:           { type: DataTypes.STRING(255), allowNull: false },
     message:         { type: DataTypes.TEXT, allowNull: false },
-    tenant_id:       { type: DataTypes.STRING(50) },
+    tenant_id:       { type: DataTypes.UUID },
     severity:        { type: DataTypes.ENUM('critical','high','medium','low','info'), defaultValue: 'info' },
     read:            { type: DataTypes.BOOLEAN, defaultValue: false },
 }, { tableName: 'notifications', underscored: true });
@@ -457,7 +457,7 @@ const SsoProvider = sequelize.define('SsoProvider', {
     provider_id:   { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     provider_name: { type: DataTypes.STRING(100), allowNull: false },
     provider_type: { type: DataTypes.ENUM('SAML','OIDC','SCIM'), defaultValue: 'SAML' },
-    tenant_id:     { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:     { type: DataTypes.UUID, allowNull: false },
     metadata_url:  { type: DataTypes.STRING(1000) },
     client_id:     { type: DataTypes.STRING(500) },
     status:        { type: DataTypes.ENUM('active','inactive','pending_verification'), defaultValue: 'pending_verification' },
@@ -481,7 +481,7 @@ SsoProvider.afterFind(async (results) => {
 /* ─── Email Logs ────────────────────────── */
 const EmailLog = sequelize.define('EmailLog', {
     log_id:    { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id: { type: DataTypes.STRING(50) },
+    tenant_id: { type: DataTypes.UUID },
     recipient: { type: DataTypes.STRING(255), allowNull: false },
     subject:   { type: DataTypes.STRING(500) },
     status:    { type: DataTypes.ENUM('pending','delivered','bounced','spam','opened','clicked'), defaultValue: 'pending' },
@@ -507,7 +507,7 @@ EmailLog.afterFind(async (results) => {
 /* ─── Compliance Frameworks & Evidence ────────── */
 const Framework = sequelize.define('Framework', {
     id:          { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:   { type: DataTypes.STRING(50) },
+    tenant_id:   { type: DataTypes.UUID },
     name:        { type: DataTypes.STRING(255), allowNull: false },
     description: { type: DataTypes.TEXT },
 }, { tableName: 'frameworks', underscored: true });
@@ -530,7 +530,7 @@ const Evidence = sequelize.define('Evidence', {
 
 const ComplianceScore = sequelize.define('ComplianceScore', {
     id:           { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:    { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:    { type: DataTypes.UUID, allowNull: false },
     framework_id: { type: DataTypes.UUID, allowNull: false },
     score:        { type: DataTypes.DECIMAL(5,2), defaultValue: 0 },
     status:       { type: DataTypes.ENUM('Good','On Track','Review','Urgent'), defaultValue: 'Review' },
@@ -539,7 +539,7 @@ const ComplianceScore = sequelize.define('ComplianceScore', {
 /* ─── Board Report Models ───────────────── */
 const BoardReport = sequelize.define('BoardReport', {
     id:                { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:         { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:         { type: DataTypes.UUID, allowNull: false },
     quarter:           { type: DataTypes.STRING(20), allowNull: false },
     executive_summary: { type: DataTypes.TEXT },
     generated_at:      { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
@@ -548,7 +548,7 @@ const BoardReport = sequelize.define('BoardReport', {
 const BoardMetric = sequelize.define('BoardMetric', {
     id:          { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     report_id:   { type: DataTypes.UUID, allowNull: false },
-    tenant_id:   { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:   { type: DataTypes.UUID, allowNull: false },
     metric_name: { type: DataTypes.STRING(100), allowNull: false },
     value:       { type: DataTypes.STRING(50) },
     target:      { type: DataTypes.STRING(50) },
@@ -558,7 +558,7 @@ const BoardMetric = sequelize.define('BoardMetric', {
 const BoardRisk = sequelize.define('BoardRisk', {
     id:          { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     report_id:   { type: DataTypes.UUID, allowNull: false },
-    tenant_id:   { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:   { type: DataTypes.UUID, allowNull: false },
     type:        { type: DataTypes.STRING(50) },
     description: { type: DataTypes.TEXT },
     severity:    { type: DataTypes.ENUM('Critical','Warning','Positive'), defaultValue: 'Warning' },
@@ -567,7 +567,7 @@ const BoardRisk = sequelize.define('BoardRisk', {
 const BoardRecommendation = sequelize.define('BoardRecommendation', {
     id:        { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     report_id: { type: DataTypes.UUID, allowNull: false },
-    tenant_id: { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id: { type: DataTypes.UUID, allowNull: false },
     action:    { type: DataTypes.STRING(255), allowNull: false },
     owner:     { type: DataTypes.STRING(100) },
     timeline:  { type: DataTypes.STRING(50) },

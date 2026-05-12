@@ -5,7 +5,7 @@ const { sequelize } = require('../config/database');
 /* ─── Teams ─────────────────────────────────────────────── */
 const Team = sequelize.define('Team', {
     id:            { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:     { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:     { type: DataTypes.UUID, allowNull: false },
     department_id: { type: DataTypes.UUID, allowNull: false },
     team_name:     { type: DataTypes.STRING(100), allowNull: false },
     manager_id:    { type: DataTypes.UUID },
@@ -17,7 +17,7 @@ const Team = sequelize.define('Team', {
 /* ─── User Activity Logs ─────────────────────────────────── */
 const UserActivityLog = sequelize.define('UserActivityLog', {
     id:          { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:   { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:   { type: DataTypes.UUID, allowNull: false },
     user_id:     { type: DataTypes.UUID, allowNull: false },
     action:      { type: DataTypes.STRING(100), allowNull: false },
     login_time:  { type: DataTypes.DATE },
@@ -31,7 +31,7 @@ const UserActivityLog = sequelize.define('UserActivityLog', {
 /* ─── Tenant Frameworks ──────────────────────────────────── */
 const TenantFramework = sequelize.define('TenantFramework', {
     id:             { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:      { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:      { type: DataTypes.UUID, allowNull: false },
     framework_id:   { type: DataTypes.UUID, allowNull: false },
     framework_name: { type: DataTypes.STRING(100) },
     enabled:        { type: DataTypes.BOOLEAN, defaultValue: true },
@@ -44,7 +44,7 @@ const TenantFramework = sequelize.define('TenantFramework', {
 /* ─── Tenant Notification Templates ─────────────────────── */
 const TenantNotification = sequelize.define('TenantNotification', {
     id:           { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:    { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:    { type: DataTypes.UUID, allowNull: false },
     type:         { type: DataTypes.ENUM('training_reminder','overdue_training','cert_expiry','welcome','campaign_alert'), allowNull: false },
     recipient_id: { type: DataTypes.UUID },
     recipient_group: { type: DataTypes.ENUM('all','department','role','individual'), defaultValue: 'individual' },
@@ -59,7 +59,7 @@ const TenantNotification = sequelize.define('TenantNotification', {
 /* ─── User Import Jobs ───────────────────────────────────── */
 const UserImportJob = sequelize.define('UserImportJob', {
     id:             { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:      { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:      { type: DataTypes.UUID, allowNull: false },
     imported_by:    { type: DataTypes.UUID },
     file_name:      { type: DataTypes.STRING(255) },
     file_url:       { type: DataTypes.STRING(1000) },

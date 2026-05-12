@@ -5,7 +5,7 @@ const { sequelize } = require('../config/database');
 /* ─── Departments ───────────────────────── */
 const Department = sequelize.define('Department', {
     id:          { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:   { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:   { type: DataTypes.UUID, allowNull: false },
     name:        { type: DataTypes.STRING(100), allowNull: false },
     head_user_id:{ type: DataTypes.UUID },
     employee_count: { type: DataTypes.INTEGER, defaultValue: 0 },
@@ -15,7 +15,7 @@ const Department = sequelize.define('Department', {
 const CourseModule = sequelize.define('CourseModule', {
     id:          { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     course_id:   { type: DataTypes.UUID, allowNull: false },
-    tenant_id:   { type: DataTypes.STRING(50) },
+    tenant_id:   { type: DataTypes.UUID },
     title:       { type: DataTypes.STRING(255), allowNull: false },
     type:        { type: DataTypes.ENUM('video','reading','quiz','exam'), defaultValue: 'video' },
     duration_minutes: { type: DataTypes.INTEGER, defaultValue: 10 },
@@ -25,7 +25,7 @@ const CourseModule = sequelize.define('CourseModule', {
 /* ─── Course Assignments ────────────────── */
 const CourseAssignment = sequelize.define('CourseAssignment', {
     id:            { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:     { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:     { type: DataTypes.UUID, allowNull: false },
     user_id:       { type: DataTypes.UUID, allowNull: false },
     course_id:     { type: DataTypes.UUID, allowNull: false },
     assigned_by:   { type: DataTypes.UUID },
@@ -38,7 +38,7 @@ const CourseAssignment = sequelize.define('CourseAssignment', {
 /* ─── Training Progress ─────────────────── */
 const TrainingProgress = sequelize.define('TrainingProgress', {
     id:            { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:     { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:     { type: DataTypes.UUID, allowNull: false },
     user_id:       { type: DataTypes.UUID, allowNull: false },
     course_id:     { type: DataTypes.UUID, allowNull: false },
     module_id:     { type: DataTypes.UUID },
@@ -52,7 +52,7 @@ const TrainingProgress = sequelize.define('TrainingProgress', {
 /* ─── Exam Results ──────────────────────── */
 const ExamResult = sequelize.define('ExamResult', {
     id:           { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:    { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:    { type: DataTypes.UUID, allowNull: false },
     user_id:      { type: DataTypes.UUID, allowNull: false },
     course_id:    { type: DataTypes.UUID, allowNull: false },
     score:        { type: DataTypes.INTEGER, defaultValue: 0 },
@@ -65,7 +65,7 @@ const ExamResult = sequelize.define('ExamResult', {
 /* ─── Phishing Campaigns ────────────────── */
 const PhishingCampaignCISO = sequelize.define('PhishingCampaignCISO', {
     id:             { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:      { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:      { type: DataTypes.UUID, allowNull: false },
     created_by:     { type: DataTypes.UUID },
     campaign_name:  { type: DataTypes.STRING(255), allowNull: false },
     template_type:  { type: DataTypes.ENUM('it_support','password_reset','invoice','delivery','hr_update','ceo_fraud'), defaultValue: 'it_support' },
@@ -81,7 +81,7 @@ const PhishingCampaignCISO = sequelize.define('PhishingCampaignCISO', {
 /* ─── Phishing Emails ───────────────────── */
 const PhishingEmail = sequelize.define('PhishingEmail', {
     id:              { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:       { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:       { type: DataTypes.UUID, allowNull: false },
     campaign_id:     { type: DataTypes.UUID, allowNull: false },
     user_id:         { type: DataTypes.UUID, allowNull: false },
     sent_at:         { type: DataTypes.DATE },
@@ -95,7 +95,7 @@ const PhishingEmail = sequelize.define('PhishingEmail', {
 /* ─── Phishing Results ──────────────────── */
 const PhishingResult = sequelize.define('PhishingResult', {
     id:                   { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:            { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:            { type: DataTypes.UUID, allowNull: false },
     campaign_id:          { type: DataTypes.UUID, allowNull: false },
     emails_sent:          { type: DataTypes.INTEGER, defaultValue: 0 },
     emails_opened:        { type: DataTypes.INTEGER, defaultValue: 0 },
@@ -109,7 +109,7 @@ const PhishingResult = sequelize.define('PhishingResult', {
 /* ─── Remedial Assignments ──────────────── */
 const RemedialAssignment = sequelize.define('RemedialAssignment', {
     id:              { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:       { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:       { type: DataTypes.UUID, allowNull: false },
     employee_id:     { type: DataTypes.UUID, allowNull: false },
     trigger_event:   { type: DataTypes.ENUM('phishing_click','credential_submission','exam_failure','overdue_training'), allowNull: false },
     remedial_course_id: { type: DataTypes.UUID, allowNull: false },
@@ -123,7 +123,7 @@ const RemedialAssignment = sequelize.define('RemedialAssignment', {
 /* ─── Compliance Frameworks ─────────────── */
 const ComplianceFramework = sequelize.define('ComplianceFramework', {
     id:              { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:       { type: DataTypes.STRING(50) },
+    tenant_id:       { type: DataTypes.UUID },
     name:            { type: DataTypes.STRING(100), allowNull: false },
     description:     { type: DataTypes.TEXT },
     version:         { type: DataTypes.STRING(20) },
@@ -136,7 +136,7 @@ const ComplianceFramework = sequelize.define('ComplianceFramework', {
 const FrameworkControl = sequelize.define('FrameworkControl', {
     id:              { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
     framework_id:    { type: DataTypes.UUID, allowNull: false },
-    tenant_id:       { type: DataTypes.STRING(50) },
+    tenant_id:       { type: DataTypes.UUID },
     control_id:      { type: DataTypes.STRING(50) },
     title:           { type: DataTypes.STRING(255), allowNull: false },
     description:     { type: DataTypes.TEXT },
@@ -150,14 +150,14 @@ const FrameworkCourseMapping = sequelize.define('FrameworkCourseMapping', {
     framework_id: { type: DataTypes.UUID, allowNull: false },
     control_id:   { type: DataTypes.UUID, allowNull: false },
     course_id:    { type: DataTypes.UUID, allowNull: false },
-    tenant_id:    { type: DataTypes.STRING(50) },
+    tenant_id:    { type: DataTypes.UUID },
     weight:       { type: DataTypes.DECIMAL(5,2), defaultValue: 1.0 },
 }, { tableName: 'framework_course_mapping', underscored: true });
 
 /* ─── Risk Scores ───────────────────────── */
 const RiskScore = sequelize.define('RiskScore', {
     id:                     { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:              { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:              { type: DataTypes.UUID, allowNull: false },
     user_id:                { type: DataTypes.UUID, allowNull: false },
     department_id:          { type: DataTypes.UUID },
     risk_score:             { type: DataTypes.DECIMAL(5,2), defaultValue: 0 },
@@ -172,7 +172,7 @@ const RiskScore = sequelize.define('RiskScore', {
 /* ─── Risk Events ───────────────────────── */
 const RiskEvent = sequelize.define('RiskEvent', {
     id:           { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:    { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:    { type: DataTypes.UUID, allowNull: false },
     user_id:      { type: DataTypes.UUID, allowNull: false },
     event_type:   { type: DataTypes.ENUM('phishing_click','credential_submission','exam_failure','training_overdue','report_submitted'), allowNull: false },
     severity:     { type: DataTypes.ENUM('critical','high','medium','low'), defaultValue: 'medium' },
@@ -184,7 +184,7 @@ const RiskEvent = sequelize.define('RiskEvent', {
 /* ─── Exports ───────────────────────────── */
 const Export = sequelize.define('Export', {
     id:          { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    tenant_id:   { type: DataTypes.STRING(50), allowNull: false },
+    tenant_id:   { type: DataTypes.UUID, allowNull: false },
     requested_by:{ type: DataTypes.UUID },
     type:        { type: DataTypes.ENUM('board_report','evidence_pack','audit_log','training_report','certificate_report'), allowNull: false },
     format:      { type: DataTypes.ENUM('pdf','csv','excel','zip'), defaultValue: 'pdf' },

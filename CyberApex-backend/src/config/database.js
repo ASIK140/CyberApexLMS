@@ -35,8 +35,11 @@ async function connectDB() {
         await sequelize.authenticate();
         logger.info('✅ PostgreSQL connected successfully');
         
-        await sequelize.sync({ alter: false });
-        logger.info('✅ Database synchronized (POSTGRES)');
+        // Prisma handles core migrations. Sequelize sync is only for legacy/extended tables.
+        if (process.env.SYNC_DB === 'true' || process.env.NODE_ENV !== 'production') {
+            await sequelize.sync({ alter: false });
+            logger.info('✅ Database synchronized (SEQUELIZE)');
+        }
         
         return sequelize;
     } catch (error) {
