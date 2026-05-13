@@ -23,8 +23,24 @@ export default function LoginPage() {
     setLoading(true);
     try {
       // Use the new v1 auth endpoint which correctly queries the Prisma database and Argon2 hashes
-      const { data: json } = await apiClient.post('/v1/auth/login', { email, password });
-
+      let response;
+      try {
+        response = await apiClient.post('/v1/auth/login', { email, password });
+      } catch (e: any) {
+        // If v1 fails with "not found", try the legacy endpoint as a fallback
+        const isNotFound = 
+          e.response?.status === 404 || 
+          (e.response?.data?.message?.toLowerCase().includes('not found')) ||
+          (e.message?.toLowerCase().includes('not found'));
+          
+        if (isNotFound) {
+          response = await apiClient.post('/auth/login', { email, password });
+        } else {
+          throw e;
+        }
+      }
+      
+      const { data: json } = response;
       if (!json.data) {
         throw new Error('Login failed.');
       }

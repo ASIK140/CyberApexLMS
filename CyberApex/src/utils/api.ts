@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { useAuthStore } from '../stores/auth.store';
 
-const BASE = '/api';
+const API_URL  = process.env.NEXT_PUBLIC_API_URL || 'https://cyberapexlms.onrender.com';
+const BASE     = `${API_URL}/api`;
 
 export const apiClient = axios.create({
   baseURL: BASE,
