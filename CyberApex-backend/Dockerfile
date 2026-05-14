@@ -1,7 +1,8 @@
 FROM node:20-alpine
 
 # Install necessary libraries for Prisma
-RUN apk add --no-cache libc6-compat openssl1.1-compat
+RUN apk add --no-cache libc6-compat openssl \
+    && apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/v3.17/main openssl1.1-compat
 
 WORKDIR /app
 
