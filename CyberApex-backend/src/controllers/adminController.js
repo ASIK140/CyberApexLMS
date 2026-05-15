@@ -1,19 +1,20 @@
 'use strict';
 
-const { Tenant, User, Course, PhishingCampaign } = require('../models');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 // GET /api/admin/dashboard
 exports.getDashboard = async (req, res) => {
     try {
-        const totalTenants = await Tenant.count();
-        const activeTenants = await Tenant.count({ where: { status: 'active' } });
-        const trialTenants = await Tenant.count({ where: { status: 'trial' } });
-        const suspendedTenants = await Tenant.count({ where: { subscription_status: 'suspended' } });
+        const totalTenants = await prisma.tenant.count();
+        const activeTenants = await prisma.tenant.count({ where: { status: 'active' } });
+        const trialTenants = await prisma.tenant.count({ where: { status: 'trial' } });
+        const suspendedTenants = await prisma.tenant.count({ where: { status: 'suspended' } });
         
-        const totalRevenue = await Tenant.sum('monthly_revenue') || 0;
-        const totalUsers = await User.count();
-        const publishedCourses = await Course.count({ where: { status: 'published' } });
-        const activeCampaigns = await PhishingCampaign.count({ where: { status: 'Running' } });
+        const totalRevenue = 0; // Removed from DB schema
+        const totalUsers = await prisma.user.count();
+        const publishedCourses = await prisma.course.count({ where: { status: 'published' } });
+        const activeCampaigns = 0; // PhishingCampaign model removed from schema
 
         res.json({
             success: true,
