@@ -13,8 +13,9 @@ function parseBullMQConnection(): ConnectionOptions {
       db:       parsed.pathname && parsed.pathname !== '/'
         ? Number(parsed.pathname.slice(1))
         : undefined,
-      tls:      parsed.protocol === 'rediss:' ? {} : undefined,
+      tls:      parsed.protocol === 'rediss:' ? { rejectUnauthorized: false } : undefined,
       maxRetriesPerRequest: null,
+      family: 0, // Force IPv4 to prevent Upstash connection reset issues
     };
     // Remove undefined keys
     (Object.keys(opts) as (keyof ConnectionOptions)[]).forEach(
