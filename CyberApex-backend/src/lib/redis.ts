@@ -9,6 +9,8 @@ export const redis = new Redis(redisUrl, {
   enableReadyCheck: false,
   lazyConnect: true,
   family: 0, // Force IPv4 to prevent Upstash connection reset issues
+  keepAlive: 10000, // Send TCP keepalives to prevent idle disconnects
+  connectTimeout: 15000,
   ...(isTLS ? { tls: { rejectUnauthorized: false } } : {})
 });
 

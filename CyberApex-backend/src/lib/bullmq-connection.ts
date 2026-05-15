@@ -16,6 +16,8 @@ function parseBullMQConnection(): ConnectionOptions {
       tls:      parsed.protocol === 'rediss:' ? { rejectUnauthorized: false } : undefined,
       maxRetriesPerRequest: null,
       family: 0, // Force IPv4 to prevent Upstash connection reset issues
+      keepAlive: 10000,
+      connectTimeout: 15000,
     };
     // Remove undefined keys
     (Object.keys(opts) as (keyof ConnectionOptions)[]).forEach(
