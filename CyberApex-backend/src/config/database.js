@@ -23,6 +23,9 @@ function getSequelize() {
             logging: false,
             retry: { max: 3 },
             pool: { max: 10, min: 0, acquire: 5000, idle: 10000 },
+            dialectOptions: process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true'
+                ? { ssl: { require: true, rejectUnauthorized: false } }
+                : {}
         }
     );
     return sequelizeInstance;
